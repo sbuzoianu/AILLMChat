@@ -12,7 +12,7 @@ def init():
         content TEXT
     )
     """)
-
+ # tabel în care salvăm embedding-urile ca BLOB (și dimensiunea)
     cur.execute("""
     CREATE TABLE IF NOT EXISTS embeddings (
         id INTEGER PRIMARY KEY,  -- id = knowledge.id

@@ -1,7 +1,8 @@
 # knowledge/embeddings.py
+# căutarea semantică — sistemul înțelege sensul întrebării, chiar dacă utilizatorul folosește cuvinte diferite de cele din baza de date.
 import os
 import numpy as np
-import faiss
+import faiss # Facebook AI Similarity Search
 from sentence_transformers import SentenceTransformer
 from database.db import get_connection
 
@@ -17,7 +18,9 @@ _dim = None
 def _get_model():
     global _model
     if _model is None:
-        _model = SentenceTransformer(MODEL_NAME)
+        # Ia o frază (ex: „Cum funcționează gravitația?”) și o transformă într-un vector
+        # Fraze cu sens similar (ex: „Forța de atracție a Pământului”) vor genera liste de numere foarte apropiate matematic într-un spațiu multidimensional.
+        _model = SentenceTransformer(MODEL_NAME) 
     return _model
 
 def compute_embedding(text: str) -> np.ndarray:
@@ -32,7 +35,7 @@ def _to_blob(vec: np.ndarray):
 def _from_blob(blob, dim):
     arr = np.frombuffer(blob, dtype='float32')
     return arr.reshape((dim,))
-
+# Salvează vectorul în baza de date sub formă de BLOB (date binare brute)
 def save_embedding(knowledge_id: int, vector: np.ndarray):
     con = get_connection()
     cur = con.cursor()
@@ -41,6 +44,7 @@ def save_embedding(knowledge_id: int, vector: np.ndarray):
     con.commit()
     con.close()
 
+# Colectează toți vectorii salvați în baza de date, îi „împachetează” într-o structură specială numită Index și o salvează pe disc
 def build_faiss_index():
     global _index, _id_map, _dim
     con = get_connection()
@@ -64,7 +68,7 @@ def build_faiss_index():
 
     arr = np.vstack(vectors).astype('float32')
     _dim = arr.shape[1]
-    # normalize vectors for cosine similarity
+    # normalizează numerele pentru a asigura că sistemul calculează corect distanța (similitudinea) dintre întrebare și răspunsuri.
     faiss.normalize_L2(arr)
 
     idx = faiss.IndexFlatIP(_dim)
@@ -77,7 +81,7 @@ def build_faiss_index():
         np.save(FAISS_MAP_PATH, _id_map)
     except Exception as e:
         print("Warning: could not save FAISS index:", e)
-
+# Când pornește aplicația, verifică dacă există deja un index salvat pe disc pentru a nu-l reconstrui de la zero.
 def load_faiss_index_if_exists():
     global _index, _id_map, _dim
     try:

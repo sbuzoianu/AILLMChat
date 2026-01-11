@@ -19,7 +19,8 @@ def add_form_post():
     add_knowledge(subject, grade, content)
     return "Informația a fost adăugată cu succes!"
 
-@knowledge_bp.post("/api/add_knowledge")
+# folosita de  scripturi care comunică prin formatul JSON.
+@knowledge_bp.post("/api/add_knowledge") 
 def api_add_knowledge():
     data = request.get_json(force=True)
     subject = data.get("subject", "").strip()
