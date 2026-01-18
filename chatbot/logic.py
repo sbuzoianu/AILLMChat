@@ -43,14 +43,8 @@ def reply_to_user(question):
         # Întrebare: {întrebarea elevului}"
 # Această tehnică se numește Grounding. Ea previne „halucinațiile” (momentele când AI-ul inventează lucruri), forțându-l să rămână fidel materialelor tale didactice.
     if context_parts:
-        context = "\n---\n".join(context_parts)
-        prompt = (
-            "Ești un profesor care explică pe înțelesul elevilor. Folosește EXCLUSIV informațiile de mai jos "
-            "pentru a răspunde la întrebare.\n\n"
-            f"Context:\n{context}\n\n"
-            f"Întrebare: {question}\n\n"
-            "Răspuns (pe înțelesul unui elev, concis și clar):"
-        )
+        context = "\n".join(context_parts)
+        prompt = f"Context: {context} Question: {question} Answer:"
         return generate_answer(prompt)
 
 # Modul "Fallback" (Rezervă) - Dacă sistemul nu găsește absolut nimic util în baza ta de date, nu renunță. 

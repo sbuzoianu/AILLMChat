@@ -6,7 +6,7 @@ import faiss # Facebook AI Similarity Search
 from sentence_transformers import SentenceTransformer
 from database.db import get_connection
 
-MODEL_NAME = os.environ.get("SBERT_MODEL", "all-mpnet-base-v2")  # bun multilingual/eng; pentru română poți folosi 'paraphrase-multilingual-MiniLM-L12-v2' sau model dedicat
+MODEL_NAME = os.environ.get("SBERT_MODEL", "paraphrase-multilingual-MiniLM-L12-v2") 
 FAISS_INDEX_PATH = os.path.join(os.path.dirname(__file__), "faiss.index")
 FAISS_MAP_PATH = os.path.join(os.path.dirname(__file__), "faiss_map.npy")
 
