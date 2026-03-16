@@ -15,12 +15,15 @@ def index():
 
 @app.post("/api/chat")
 def api_chat():
-    data = request.get_json(force=True)
+    data = request.get_json(force=True, silent=True)
+    if data is None:
+        return jsonify({'reply': 'Cerere invalidă: JSON malformat.'}), 400
+
     user_msg = data.get('message', '')
     user_grd = data.get('grade', '')
     user_sbj = data.get('subject', '')
 
-    if not (user_msg or user_grd or user_sbj):
+    if not user_msg or not user_grd or not user_sbj:
         return jsonify({'reply': 'Completați toate câmpurile.'}), 400
 
     reply = reply_to_user(user_msg, user_grd, user_sbj)

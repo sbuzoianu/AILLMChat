@@ -33,20 +33,19 @@ def reply_to_user(question, grade, subject):
         if r['content'] not in context_parts:
             context_parts.append(r['content'])
 
-    if context_parts:
-        context = "\n".join(context_parts)
-       # prompt = f"Context: {context} Question: {question} Answer:"
-       #Imbunatatire prompt
-    prompt = f"""Ești un asistent educațional. 
-    Răspunde în limba română cu diacritice corecte (ă â î ș ț). 
+    if not context_parts:
+        return "Nu pot genera un răspuns."
+
+    context = "\n".join(context_parts)
+    prompt = f"""Ești un asistent educațional.
+    Răspunde în limba română cu diacritice corecte (ă â î ș ț).
     REGULI:1) Folosește DOAR informațiile din CONTEXT.
-    2) Dacă găsești răspunsul în context, COPIAZĂ propozițiile relevante cât mai fidel (fără reformulări). 
-    3) Dacă nu există informația, răspunde exact: Nu pot genera un răspuns. 
-    CONTEXT:{context} 
-    ÎNTREBARE:{question} 
+    2) Dacă găsești răspunsul în context, COPIAZĂ propozițiile relevante cât mai fidel (fără reformulări).
+    3) Dacă nu există informația, răspunde exact: Nu pot genera un răspuns.
+    CONTEXT:{context}
+    ÎNTREBARE:{question}
     RĂSPUNS:"""
-        
-        # Rares Iovu's logic
+
     ans = generate_answer(prompt).strip()
     ans = normalize_ro_diacritics(ans)
     ans = ans.replace(". ", "\n")
@@ -54,7 +53,4 @@ def reply_to_user(question, grade, subject):
     print(ans)
     print("=========================")
 
-    return ans 
-
-    prompt = f"respond exactly with: Nu pot genera un răspuns."
-    return generate_answer(prompt)
+    return ans
